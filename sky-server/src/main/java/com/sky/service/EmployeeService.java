@@ -8,6 +8,6 @@ import com.sky.result.PageResult;
 
 public interface EmployeeService {
 
-    public void save(EmployeeDTO employeeDTO);
+    void save(EmployeeDTO employeeDTO);
 
 }

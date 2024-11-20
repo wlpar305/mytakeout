@@ -26,8 +26,8 @@ import java.util.Map;
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
-    @Autowired
-    private JwtProperties jwtProperties;
+    // @Autowired
+    // private JwtProperties jwtProperties;
 
     @PostMapping
     @ApiOperation("新增员工")
