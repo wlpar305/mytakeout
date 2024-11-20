@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Data
 public class EmployeeDTO {
-    private long id;
+    private Long id;
     private String idNumber;
     private String name;
     private String phone;
