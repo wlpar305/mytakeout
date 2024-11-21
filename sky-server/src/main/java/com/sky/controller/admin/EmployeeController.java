@@ -26,8 +26,19 @@ import java.util.Map;
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
-    // @Autowired
-    // private JwtProperties jwtProperties;
+    @Autowired
+    private JwtProperties jwtProperties;
+
+    @PostMapping("/login")
+    public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
+        log.info("员工登录：{}", employeeLoginDTO);
+        Employee employee = employeeService.login(employeeLoginDTO);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(JwtClaimsConstant.EMP_ID,employee.getId());
+        String token=JwtUtil.createJWT(jwtProperties.getAdminSecretKey(),jwtProperties.getAdminTtl(),claims);
+        EmployeeLoginVO employeeLoginVO=EmployeeLoginVO.builder().id(employee.getId()).username(employee.getName()).token(token).build();
+        return Result.success(employeeLoginVO);
+    }
 
     @PostMapping
     @ApiOperation("新增员工")

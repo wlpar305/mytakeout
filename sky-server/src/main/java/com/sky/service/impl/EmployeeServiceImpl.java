@@ -29,6 +29,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
 
+    public Employee login(EmployeeLoginDTO employeeLoginDTO) {
+        String username = employeeLoginDTO.getUsername();
+        String password = employeeLoginDTO.getPassword();
+        Employee employee = employeeMapper.getByUsername(username);
+        if (employee == null) {
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
+        if (!password.equals(employee.getPassword())) {
+            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+        }
+        if (employee.getStatus()==StatusConstant.DISABLE){
+            throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
+        }
+        return employee;
+    }
+
     @Override
     public void save(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
@@ -37,9 +54,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
-
-        employee.setCreateUser(114514L);
-        employee.setUpdateUser(114514L);
+        Long currentId=BaseContext.getCurrentId();
+        employee.setCreateUser(currentId);
+        employee.setUpdateUser(currentId);
         employeeMapper.insert(employee);
 
     }

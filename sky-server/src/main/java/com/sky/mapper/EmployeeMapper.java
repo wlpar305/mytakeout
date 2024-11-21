@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface  EmployeeMapper {
 
+    Employee getByUsername(@Param("username") String username);
     @AutoFill(OperationType.INSERT)
     void insert(Employee employee);
 }
