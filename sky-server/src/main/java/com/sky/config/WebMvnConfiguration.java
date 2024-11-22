@@ -25,6 +25,17 @@ import java.util.List;
 @Slf4j
 public class WebMvnConfiguration extends WebMvcConfigurationSupport {
 
+    @Autowired
+    private JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
+    @Autowired
+    private JwtTokenUserInterceptor jwtTokenUserInterceptor;
+
+    protected void addInterceptors(InterceptorRegistry registry) {
+        log.info("开始注册拦截器");
+        registry.addInterceptor(jwtTokenAdminInterceptor).addPathPatterns("/admin/**").excludePathPatterns("/admin/employee/login");
+        registry.addInterceptor(jwtTokenUserInterceptor).addPathPatterns("/user/**").excludePathPatterns("/user/user/login").excludePathPatterns("/user/shop/status");
+    }
+
     @Bean
     public Docket docket() {
         ApiInfo apiInfo = new ApiInfoBuilder()
@@ -43,5 +54,52 @@ public class WebMvnConfiguration extends WebMvcConfigurationSupport {
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        log.info("扩展消息转换器");
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setObjectMapper(new JacksonObjectMapper());
+        converters.add(0,converter);
+    }
+    @Bean
+    public Docket docket1(){
+        log.info("生成接口文档");
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title("苍穹外卖项目接口文档")
+                .version("2.0")
+                .description("苍穹外卖项目接口文档")
+                .build();
+
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("管理端接口")
+                .apiInfo(apiInfo)
+                .select()
+                //指定生成接口需要扫描的包
+                .apis(RequestHandlerSelectors.basePackage("com.sky.controller.admin"))
+                .paths(PathSelectors.any())
+                .build();
+
+        return docket;
+    }
+
+    @Bean
+    public Docket docket2(){
+        log.info("生成接口文档");
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title("苍穹外卖项目接口文档")
+                .version("2.0")
+                .description("苍穹外卖项目接口文档")
+                .build();
+
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("用户端接口")
+                .apiInfo(apiInfo)
+                .select()
+                //指定生成接口需要扫描的包
+                .apis(RequestHandlerSelectors.basePackage("com.sky.controller.user"))
+                .paths(PathSelectors.any())
+                .build();
+
+        return docket;
     }
 }
