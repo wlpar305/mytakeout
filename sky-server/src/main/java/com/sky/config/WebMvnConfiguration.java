@@ -30,11 +30,17 @@ public class WebMvnConfiguration extends WebMvcConfigurationSupport {
     @Autowired
     private JwtTokenUserInterceptor jwtTokenUserInterceptor;
 
-    protected void addInterceptors(InterceptorRegistry registry) {
-        log.info("开始注册拦截器");
-        registry.addInterceptor(jwtTokenAdminInterceptor).addPathPatterns("/admin/**").excludePathPatterns("/admin/employee/login");
-        registry.addInterceptor(jwtTokenUserInterceptor).addPathPatterns("/user/**").excludePathPatterns("/user/user/login").excludePathPatterns("/user/shop/status");
-    }
+//    protected void addInterceptors(InterceptorRegistry registry) {
+//        log.info("开始注册拦截器");
+//        registry.addInterceptor(jwtTokenAdminInterceptor)
+//                .addPathPatterns("/admin/**")
+//                .excludePathPatterns("/admin/employee/login");
+//
+//        registry.addInterceptor(jwtTokenUserInterceptor)
+//                .addPathPatterns("/user/**")
+//                .excludePathPatterns("/user/user/login")
+//                .excludePathPatterns("/user/shop/status");
+//    }
 
     @Bean
     public Docket docket() {

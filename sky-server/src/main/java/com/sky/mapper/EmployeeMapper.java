@@ -1,5 +1,6 @@
 package com.sky.mapper;
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.annotation.AutoFill;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
@@ -13,6 +14,14 @@ import org.apache.ibatis.annotations.Select;
 public interface  EmployeeMapper {
 
     Employee getByUsername(@Param("username") String username);
+
     @AutoFill(OperationType.INSERT)
     void insert(Employee employee);
+
+    Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+
+    @AutoFill(OperationType.UPDATE)
+    void update(Employee employee);
+
+    Employee getById(@Param("id") Long id);
 }
