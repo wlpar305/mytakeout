@@ -3,6 +3,7 @@ package com.sky.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sky.constant.MessageConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.UserLoginDTO;
 import com.sky.entity.User;
 import com.sky.exception.LoginFailedException;
@@ -39,7 +40,9 @@ public class UserServiceImpl implements UserService {
         if(user==null){
             user=User.builder().openid(openid).createTime(LocalDateTime.now()).build();
             userMapper.insert(user);
+            user = userMapper.getByOpenId(openid);
         }
+        BaseContext.setCurrentId(user.getId());
         return user;
     }
 

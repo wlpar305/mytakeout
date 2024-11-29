@@ -33,6 +33,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         if (shoppingCartsList != null && shoppingCartsList.size() > 0) {
             shoppingCart = shoppingCartsList.get(0);
             shoppingCart.setNumber(shoppingCart.getNumber() + 1);
+            System.out.println(shoppingCart.getNumber());
             shoppingCartMapper.updateNumberById(shoppingCart);
         } else {
             Long dishId = shoppingCartDTO.getDishId();
@@ -55,7 +56,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public List<ShoppingCart> showShoppingCart() {
-        return shoppingCartMapper.list(ShoppingCart.builder().userId(BaseContext.getCurrentId()).build());
+        return shoppingCartMapper.list(ShoppingCart.builder().userId(5L).build());
     }
 
     @Override
@@ -67,7 +68,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public void subShoppingCart(ShoppingCartDTO shoppingCartDTO) {
         ShoppingCart shoppingCart = new ShoppingCart();
         BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
-        shoppingCart.setUserId(BaseContext.getCurrentId());
+        shoppingCart.setUserId(5L);
         List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
         if (list != null && list.size() > 0) {
             shoppingCart = list.get(0);

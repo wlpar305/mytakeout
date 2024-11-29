@@ -17,7 +17,7 @@
 
     <update id="updateNumberById">
         update shopping_cart
-        set amount = #{amount}
+        set number = #{number}
         where id=#{id};
     </update>
 
