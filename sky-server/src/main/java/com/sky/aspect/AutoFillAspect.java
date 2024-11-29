@@ -32,35 +32,50 @@ public class AutoFillAspect {
 
         OperationType operationType = autoFill.value();
         Object[] args = joinPoint.getArgs();
-        if(args == null && args.length == 0) {return;}
+        if (args == null || args.length == 0) {
+            return; // 检查 args 是否为 null 或空
+        }
 
         Object entity = args[0];
         LocalDateTime now = LocalDateTime.now();
         Long currentId = BaseContext.getCurrentId();
-        if(operationType == OperationType.INSERT) {
-            try{
-                Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
-                Method setCreateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
-                Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
-                Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
 
-                setCreateTime.invoke(entity,now);
-                setCreateUser.invoke(entity,currentId);
-                setUpdateTime.invoke(entity,now);
-                setUpdateUser.invoke(entity,currentId);
-            }catch (Exception e) {
+        if (operationType == OperationType.INSERT) {
+            try {
+                // 设置创建时间
+                Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
+                setCreateTime.invoke(entity, now);
+
+                setOptionalMethod(entity, AutoFillConstant.SET_CREATE_USER, Long.class, currentId);
+                setOptionalMethod(entity, AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class, now);
+                setOptionalMethod(entity, AutoFillConstant.SET_UPDATE_USER, Long.class, currentId);
+
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }else if(operationType == OperationType.UPDATE) {
-            try{
-                Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME,LocalDateTime.class);
-                Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER,Long.class);
-                setUpdateUser.invoke(entity,currentId);
-                setUpdateTime.invoke(entity,now);
-            }catch (Exception e) {
+        } else if (operationType == OperationType.UPDATE) {
+            try {
+                // 设置更新时间
+                Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
+                setUpdateTime.invoke(entity, now);
+                // 设置更新用户
+                setOptionalMethod(entity, AutoFillConstant.SET_UPDATE_USER, Long.class, currentId);
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
+    }
 
+    private void setOptionalMethod(Object entity, String methodName, Class<?> parameterType, Object value) {
+        try {
+            Method method = entity.getClass().getDeclaredMethod(methodName, parameterType);
+            method.invoke(entity, value);
+        } catch (NoSuchMethodException e) {
+            // 如果方法不存在，跳过调用
+            log.warn("Method {} not found in class {}", methodName, entity.getClass().getSimpleName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
+
