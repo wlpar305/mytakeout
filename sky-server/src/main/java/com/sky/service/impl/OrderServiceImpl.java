@@ -287,8 +287,8 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         Orders orders = new Orders();
-        orders.setId(orders.getId());
-        orders.setStatus(Orders.CONFIRMED);
+        orders.setId(orderDB.getId());
+        orders.setStatus(Orders.COMPLETED);
         orders.setDeliveryTime(LocalDateTime.now());
         orderMapper.update(orders);
     }
