@@ -24,4 +24,7 @@ public interface  EmployeeMapper {
     void update(Employee employee);
 
     Employee getById(@Param("id") Long id);
+
+    @Select("select * from employee where username = #{username}")
+    Employee getByName(String username);
 }

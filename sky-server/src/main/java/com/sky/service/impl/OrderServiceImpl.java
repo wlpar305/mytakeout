@@ -243,12 +243,14 @@ public class OrderServiceImpl implements OrderService {
             //log.info("申请退款：{}", refund);
             log.info("申请退款");
         }
-        Orders orders = new Orders();
-        orders.setId(ordersDB.getId());
-        orders.setStatus(Orders.CANCELLED);
-        orders.setRejectionReason(ordersRejectionDTO.getRejectionReason());
-        orders.setCancelTime(LocalDateTime.now());
-        orderMapper.update(orders);
+        if(payStatus!=Orders.COMPLETED) {
+            Orders orders = new Orders();
+            orders.setId(ordersDB.getId());
+            orders.setStatus(Orders.CANCELLED);
+            orders.setRejectionReason(ordersRejectionDTO.getRejectionReason());
+            orders.setCancelTime(LocalDateTime.now());
+            orderMapper.update(orders);
+        }
     }
 
     @Override
@@ -260,12 +262,14 @@ public class OrderServiceImpl implements OrderService {
             //log.info("申请退款：{}", refund);
             log.info("申请退款");
         }
-        Orders orders = new Orders();
-        orders.setId(ordersCancelDTO.getId());
-        orders.setStatus(Orders.CANCELLED);
-        orders.setCancelReason(ordersCancelDTO.getCancelReason());
-        orders.setCancelTime(LocalDateTime.now());
-        orderMapper.update(orders);
+        if(payStatus!=Orders.COMPLETED){
+            Orders orders = new Orders();
+            orders.setId(ordersCancelDTO.getId());
+            orders.setStatus(Orders.CANCELLED);
+            orders.setCancelReason(ordersCancelDTO.getCancelReason());
+            orders.setCancelTime(LocalDateTime.now());
+            orderMapper.update(orders);
+        }
     }
 
     @Override
