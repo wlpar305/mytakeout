@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
         if(addressBook==null){
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
-        checkOutOfRange(addressBook.getCityName()+addressBook.getDistrictName()+addressBook.getDetail());
+        //checkOutOfRange(addressBook.getCityName()+addressBook.getDistrictName()+addressBook.getDetail());
 
         Long currentId=5L;
         ShoppingCart shoppingCart=new ShoppingCart();
@@ -140,16 +140,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageResult pageQueryForUser(int pageNum,int pageSize,Integer status){
-        PageHelper.startPage(pageNum,pageSize);
-        OrdersPageQueryDTO ordersPageQueryDTO=new OrdersPageQueryDTO();
+    public PageResult pageQueryForUser(int pageNum, int pageSize, Integer status) {
+        PageHelper.startPage(pageNum, pageSize);
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
         ordersPageQueryDTO.setStatus(status);
-        ordersPageQueryDTO.setUserId(5L);
-        Page<Orders> page=orderMapper.pageQuery(ordersPageQueryDTO);
-        ArrayList<OrderVO> list=new ArrayList<>();
-        if(page!=null&&page.getTotal()>0){
-            page.forEach(orders->{
-                Long ordersId=orders.getId();
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        ArrayList<OrderVO> list = new ArrayList<>();
+        if (page != null && page.getTotal() > 0) {
+            page.forEach(orders -> {
+                Long ordersId = orders.getId();
                 List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(ordersId);
                 OrderVO orderVO = new OrderVO();
                 BeanUtils.copyProperties(orders, orderVO);
@@ -157,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
                 list.add(orderVO);
             });
         }
-        return  new PageResult(page.getTotal(),list);
+        return new PageResult(page.getTotal(), list);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class OrderServiceImpl implements OrderService {
         Orders orders=new Orders();
         orders.setId(orderDB.getId());
         if(orderDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
-            weChatPayUtil.refund(orderDB.getNumber(),orderDB.getNumber(),orders.getAmount(),orders.getAmount());
+            //weChatPayUtil.refund(orderDB.getNumber(),orderDB.getNumber(),orders.getAmount(),orders.getAmount());
             orders.setPayStatus(Orders.REFUND);
         }
         orders.setStatus(Orders.CANCELLED);
@@ -239,8 +239,9 @@ public class OrderServiceImpl implements OrderService {
         }
         Integer payStatus=ordersDB.getPayStatus();
         if (payStatus == Orders.PAID) {
-            String refund = weChatPayUtil.refund(ordersDB.getNumber(), ordersDB.getNumber(), ordersDB.getAmount(), ordersDB.getAmount());
-            log.info("申请退款：{}", refund);
+            //String refund = weChatPayUtil.refund(ordersDB.getNumber(), ordersDB.getNumber(), ordersDB.getAmount(), ordersDB.getAmount());
+            //log.info("申请退款：{}", refund);
+            log.info("申请退款");
         }
         Orders orders = new Orders();
         orders.setId(ordersDB.getId());
@@ -255,8 +256,9 @@ public class OrderServiceImpl implements OrderService {
         Orders ordersDB=orderMapper.getById(ordersCancelDTO.getId());
         Integer payStatus=ordersDB.getPayStatus();
         if (payStatus == 1) {
-            String refund = weChatPayUtil.refund(ordersDB.getNumber(), ordersDB.getNumber(), ordersDB.getAmount(), ordersDB.getAmount());
-            log.info("申请退款：{}", refund);
+            //String refund = weChatPayUtil.refund(ordersDB.getNumber(), ordersDB.getNumber(), ordersDB.getAmount(), ordersDB.getAmount());
+            //log.info("申请退款：{}", refund);
+            log.info("申请退款");
         }
         Orders orders = new Orders();
         orders.setId(ordersCancelDTO.getId());
